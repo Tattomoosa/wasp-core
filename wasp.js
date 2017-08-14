@@ -37,8 +37,16 @@ export default class Wasp {
 		return node
 	}
 
-	connect(from,to,prop) {
+	connect(from, to, prop) {
 		WaspTree.connect({from: from, to: to, prop: prop})
+	}
+	
+	disconnect(from, to, prop) {
+		WaspTree.disconnect({from: from, to: to, prop: prop})
+	}
+
+	disconnectAll(node) {
+		node.disconnectAll()
 	}
 
 	// remove takes either a node object or an id #

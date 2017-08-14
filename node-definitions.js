@@ -26,12 +26,14 @@ class WaspNode {
 		name += '.' + newId
 		//and set it
 		this.name = name
+		return this
 	}
 
 	// deletes the node and it's attached audio node(s)
 	remove() {
 		WaspTree.removeNode(this)
 		delete this
+		return null
 	}
 
 	// eventually this will need to work a little harder
@@ -46,19 +48,88 @@ class WaspNode {
 		return false
 	}
 
+	log() {
+		for (let i = 0; i < arguments.length; i++) {
+			console.log(arguments[i])
+		}
+		return this
+	}
+
 	// takes a connection - takes either a node object or an id
 	connect(node,prop) {
 		WaspTree.connect({from: this, to: node, prop: prop}) 
+		//connect returns the node you connected to!!
+		return node
 	}
 
 	// deletes a connection - takes either a node object or an id
 	disconnect(node,prop) {
 		WaspTree.disconnect({from: this, to: node, prop: prop})
+		return this
 	}
 
 	// loops through all connections and deletes them
 	disconnectAll() {
+		let o = this.io.outputs
+		console.log(o)
+		for (let i=o.length-1; i >= 0; i--) {
+			this.disconnect(o[i].toNode, o[i].toProp)
+			}
+		return this
+	}
 
+	copy() {
+		console.error ('WaspNode.copy does not exist yet. Or maybe you passed an object to Wasp.create, which will eventually be a copy operation but right now it is nothing')
+		//return new node
+		}
+
+}
+
+//so control signals update any values they are connected to
+//whenever their value changes. they do not send audio
+//signals and cannot recieve them as input
+class _Control_ extends WaspNode {
+
+	constructor(ctx,id) {
+		super(ctx,id)
+		this.node = {
+			value : 5
+			, connect : (to, prop) => {
+				//this just needs to exist
+				//it doesn't actually need to do anything
+				this.propogate()
+				}
+		}
+		this._transformFunction = (n) => n
+		}
+	
+	get value() {
+		return this.node.value
+	}
+
+	set value(n) {
+		this.node._naturalValue = n 
+		this.node.value = this._transformFunction (n)
+		this.propogate()
+	}
+
+	set transformFunction (fn) {
+		this._transformFunction = fn
+		this.value = this.node._naturalValue
+	}
+
+	propogate() {
+		let o = this.io.outputs
+		console.log('outputs', o)
+		for (let i=0; i < o.length; i++) {
+			let {
+				toNode,
+				toProp
+				} = o[i]
+			console.log('propogation event')
+			console.log(i, o, o[i])
+			toNode.set(toProp, this.node.value)
+		}
 	}
 
 }
@@ -165,5 +236,6 @@ export {
 	_Gain_ as Gain
 	,_Oscillator_ as Oscillator
 	,_Analyzer_ as Analyzer
+	,_Control_ as Control
 	,_Destination_ as Destination 
 }
