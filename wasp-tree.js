@@ -33,27 +33,21 @@ const WaspTree = (function() {
 		let localId = node.id
 
 		if (!undoOp) {
-			if (!redoOp) {
-					id += 1
-					localId = id
-					undo.reset()
-				}
-
-			if (typeof node === 'string') {
-				let nodestr = node
-				node = NodeFactory.create( {
-					type: node
-					, audioContext: this.audioContext
-					, id: id})
-				if (!node) {
-					success = false
-					node = {name: nodestr}
-					message = 'Cannot create node: ' + nodestr + ' is not a valid type\n'
-				}
+			if (redoOp) {
+					node.changeId(localId)
 			} else {
-				node.changeId(localId)
+				id += 1
+				localId = id
+				undo.reset()
+				//if we got passed a string, make a new node
+				if (typeof node === 'string') {
+					makeNewNode(this.audioContext)
+				} else {
+					//if we got passed an existing node
+					//we perform a deep copy
+					node = node.copy()
+				}
 			}
-
 			//node.id = id
 			//history.push({op: addNode, node: node})
 			if (!redoOp && !undoOp && !noUndo) {
@@ -70,6 +64,11 @@ const WaspTree = (function() {
 				}
 			}
 
+		if (store.localId) {
+			console.log('shit - we got duplicate ids\nyou should find out why')
+			success = false
+		}
+
 		//debug
 		logger('Add', {
 			node: node
@@ -83,14 +82,24 @@ const WaspTree = (function() {
 			return
 		}
 
-		if (store.localId) {
-			console.log('shit - we got duplicate ids\nyou should find out why')
-		}
-
 		store[localId] = node
 
 		return node
 
+		function makeNewNode (ctx) {
+				let nodestr = node
+				//make a new node of type
+				node = NodeFactory.create( {
+					type: node
+					, audioContext: ctx
+					, id: id})
+				//if we fail
+				if (!node) {
+					success = false
+					node = {name: nodestr}
+					message = 'Cannot create node: ' + nodestr + ' is not a valid type\n'
+				}
+		}
 	}
 
 	function removeNode (node, options) {
@@ -223,6 +232,7 @@ const WaspTree = (function() {
 
 		//we don't do these things during an undo/redo
 		if (!undoOp && !redoOp) {
+			undo.reset()
 			//push the opposite function
 			history.push((doUndo) =>
 				doUndo ?
@@ -336,16 +346,25 @@ const WaspTree = (function() {
 				undoStep+=1
 				history.slice(-undoStep)[0](true)
 			} else {
-				console.log ("END OF STACK Nothing to undo")
+				logger('Undo', { 
+					undoOp: true
+					, success: false
+					, message: 'Bottom of undo stack, nothing to undo'
+					})
 			}
 		}
 
 	function redo () {
+		//can't redo if we're at the very first undo step
 		if (undoStep > 0) {
 			history.slice(-undoStep)[0](false)
 			undoStep -= 1
 			} else {
-				console.log ("END OF STACK Nothing to redo")
+				logger('Redo', {
+					redoOp: true
+					, success: false
+					, message: 'Top of redo stack, nothing to redo'
+					})
 			}
 		}
 
@@ -437,26 +456,38 @@ let logger = function(op, options) {
 		case 'Log' :
 			iconStyle='background: #c77; color: white;'
 			icon='"'
-			break;
+			break
 		//unused
 		case 'ERROR!!' :
 			iconStyle='background: #f00; color: white'
 			icon='!'
+			break
+		default :
+			icon=''
 	}
 
 	if (undoOp==true) {
-		op = 'UNDO ' + step + ' : '+ op
-		iconStyle='background: #555; color: white;'
-		icon='< ' + icon
+		if (success) {
+			op = 'Undo ' + step + ' : '+ op
+			icon='< ' + icon
+			iconStyle='background: #555; color: white;'
+		} else {
+			icon='<'
+		}
 	}
 
 	if (redoOp==true) {
-		op = 'REDO ' + step + ' : ' + op
-		iconStyle='background: #999; color: white;'
-		icon='> ' + icon
+		if (success) {
+			op = 'Redo ' + step + ' : ' + op
+			iconStyle='background: #999; color: white;'
+			icon='> ' + icon
+		} else {
+			icon='>'
 		}
+	}
 
 	if (!success) {
+		op += ' Failed'
 		message = '\n\n' + message
 		icon = 'X ' + icon
 		iconStyle='background: #f22; color: white;'
@@ -481,6 +512,7 @@ let logger = function(op, options) {
 		if (prop != false) {
 			header += ':' + prop
 		}
+	} else {
 	}
 
 	header = pad(header)
