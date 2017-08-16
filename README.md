@@ -28,32 +28,10 @@ gain.connect( wasp.master );
 
 most actions can be chained:
 
-<<<<<<< HEAD
 ```javascript
 let osc2 = wasp.create ( 'oscillator' )
 	.set('frequency', 200)
 	.set('waveform', 'square')
-	.connect(gain)
-```
-
-Watch out for the setters.
-```javascript
-// TODO DOES THIS WORK with the setter?
-control.value = 50
-control.transformFunction = (n) => {return n*80}
-```
-
-```javascript
-wasp.connect ( osc, osc2, 'frequency'})
-
-let val = wasp.create( 'control' );
-=======
-//run actions either through wasp
-wasp.connect( osc, gain );
-
-//or the node itself
-gain.connect( wasp.master ); 
-
 ```
 
 most actions can be chained:
@@ -79,10 +57,8 @@ control.transformFunction = (n) => {return n*80}
 ```
 wasp.connect ( osc, { osc2, osc, 'frequency'}) //not implemented like this yet
 
-//nothing that follows is implemented really
-let val = wasp.create( 'control' ); //simple control node //not implemented like this yet 
->>>>>>> dcc29918b52913375410e9d37106a69b11801c2b
-val.connect ( { gain, 'gain' } );
+let val = wasp.create( 'control' ); //simple control node
+val.connect ( gain, 'gain' );
 val.value = .7;
 console.log( gain.node.value ) // .7;
 
@@ -104,23 +80,6 @@ wasp.undo()
 wasp.redo()
 
 ```
-## API
-
-The Wasp object is a singleton and contains the following methods:
-```
-wasp.create( 'node type' )
-wasp.remove( node || id )
-wasp.connect( from, to, prop ) //no prop means connect to input
-wasp.disconnect( from, to, prop )
-wasp.undo()
-wasp.redo()
-
-```
-
-All WASP nodes contain the following methods:
-```
-
-```
 
 ### AudioNodes
 
@@ -131,7 +90,7 @@ These are wrappers around existing Web Audio Node APIs.
 Control Nodes have no associated audio node. They do not send signals
 like an Audio Node would, but instead propogate their value on to all their
 connections. Take the following:
-```
+```javascript
 let ctrl = wasp.create('control');
 let osc = wasp.create('oscillator');
 ctrl.value = 500;
@@ -143,13 +102,13 @@ osc.log('frequency'); // 900
 ```
 
 Control Nodes can also be supplied with a transform function:
-```
+```javascript
 ctrl.value = 10;
 ctrl.transformFunction = (n) => {return n*2};
 console.log(ctrl.value); // 20
 ```
 And connected to each other:
-```
+```javascript
 let ctrl = wasp.create('control');
 let ctrl2 = wasp.create('control');
 ctrl.value = 1;
@@ -169,7 +128,7 @@ Racks can be exported as JSON, and even loaded to work without Wasp for performa
 
 Initializing a Rack:
 
-```
+```javascript
 let osc = wasp.create( 'oscillator' )
 let gain = wasp.create( 'gain' )
 osc.connect(gain)
@@ -180,8 +139,8 @@ let rack = new wasp.rack ( [osc, gain] )
 Upon initialization, `rack` will have no inputs and no outputs. To interact with a rack, you have to
 `expose` it's I/O:
 
-```
-rack.expose( osc.frequency, 'oscillator 1 frequency' );
+```javascript
+rack.expose( osc.frequency, 'oscillator 1 frequency' ); // or rack.expose ( osc, 'frequency', 'osc 1 frequency' )
 let control = wasp.create( 'control' );
 control.value = 50;
 control.connect( rack, 'oscillator 1 frequency' );
@@ -205,7 +164,6 @@ let rack = new wasp.rack ( [osc, gain] );
 * Export as VanillaJS
 * Clone
 
-<<<<<<< HEAD
 ### AudioNodes
 
 These are wrappers around existing Web Audio Node APIs.
@@ -215,7 +173,8 @@ These are wrappers around existing Web Audio Node APIs.
 Control Nodes have no associated audio node. They do not send signals
 like an Audio Node would, but instead propogate their value on to all their
 connections. Take the following:
-```
+
+```javascript
 let ctrl = wasp.create('control');
 let osc = wasp.create('oscillator');
 ctrl.value = 500;
@@ -227,13 +186,13 @@ osc.log('frequency'); // 900
 ```
 
 Control Nodes can also be supplied with a transform function:
-```
+```javascript
 ctrl.value = 10;
 ctrl.transformFunction = (n) => {return n*2};
 console.log(ctrl.value); // 20
 ```
 And connected to each other:
-```
+```javascript
 let ctrl = wasp.create('control');
 let ctrl2 = wasp.create('control');
 ctrl.value = 1;
@@ -253,7 +212,7 @@ Racks can be exported as JSON, and even loaded to work without Wasp for performa
 
 Initializing a Rack:
 
-```
+```javascript
 let osc = wasp.create( 'oscillator' )
 let gain = wasp.create( 'gain' )
 osc.connect(gain)
@@ -264,15 +223,15 @@ let rack = new wasp.rack ( [osc, gain] )
 Upon initialization, `rack` will have no inputs and no outputs. To interact with a rack, you have to
 `expose` it's I/O:
 
-```
+```javascript
 rack.expose( osc.frequency, 'oscillator 1 frequency' );
 let control = wasp.create( 'control' );
 control.value = 50;
 control.connect( rack, 'oscillator 1 frequency' );
 ```
 
-Note that any I/O connected to external nodes upon initialization of the rack will be exposed:
-```
+Note that any I/O connected to external nodes upon initialization of the rack will be exposed by default:
+```javascript
 let osc = wasp.create( 'oscillator' );
 let gain = wasp.create( 'gain' );
 let control = wasp.create( 'control' );
@@ -289,6 +248,6 @@ let rack = new wasp.rack ( [osc, gain] );
 * Export as VanillaJS
 * Clone
 
-=======
->>>>>>> dcc29918b52913375410e9d37106a69b11801c2b
 ### Contributing
+
+Probably don't yet. But you can! Open an issue first so we can talk if you are interested. Thanks!
