@@ -33,41 +33,6 @@ let osc2 = wasp.create ( 'oscillator' )
 	.set('frequency', 200)
 	.set('waveform', 'square')
 ```
-
-most actions can be chained:
-
-```
-
-let osc2 = wasp.create ( 'oscillator' )
-	.set('frequency', 200)
-	.set('waveform', 'square')
-	.connect(gain)
-```
-
-Watch out for all the setters:
-```
-// TODO DOES THIS WORK with the setter?
-
-let control = wasp.create( 'control' ).value = 40
-control.value = 50
-control.transformFunction = (n) => {return n*80}
-
-```
-
-```
-wasp.connect ( osc, { osc2, osc, 'frequency'}) //not implemented like this yet
-
-let val = wasp.create( 'control' ); //simple control node
-val.connect ( gain, 'gain' );
-val.value = .7;
-console.log( gain.node.value ) // .7;
-
-//nothing that follows is implemented really, but this is how
-//complex nodes will be handled soon.
-let synth = wasp.load( json );
-synth.get('inputs') // ['pitch', 'LFO', 'EQ Band 1'] CUSTOM PARAMS
-
-```
 ## API
 
 The Wasp object is a singleton and contains the following methods:
