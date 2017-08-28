@@ -1,11 +1,25 @@
-import { 
-	Gain
-	, Oscillator
-	, Analyzer
-	, Destination
+// import { 
+// 	//web audio nodes
+// 	Gain
+// 	, Oscillator
+// 	, Analyzer
+// 	, Destination
 
- , Control
-} from './node-definitions'
+// 	//custom control node
+//   , Control
+// } from './node-definitions.js'
+
+//Web Audio API Nodes
+import { Analyzer } from './node-definitions/Analyzer.js'
+import { BiquadFilter } from './node-definitions/BiquadFilter.js'
+import { Destination } from './node-definitions/Destination.js'
+import { Gain } from './node-definitions/Gain.js'
+import { Oscillator } from './node-definitions/Oscillator.js'
+
+//Custom WASP Nodes
+import { Control } from './node-definitions/Control.js'
+
+
 
 const NodeFactory = {}
 NodeFactory.create = function(options) {
@@ -42,6 +56,7 @@ let nodeLookup = {
 	,'analyzer' : Analyzer
 	,'analyser' : Analyzer
 	,'control' : Control
+	,'biquad filter' : BiquadFilter
 	,'destination' : Destination
 }
 

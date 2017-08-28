@@ -93,7 +93,7 @@ class _Control_ extends WaspNode {
 	constructor(ctx,id) {
 		super(ctx,id)
 		this.node = {
-			value : 5
+			value : 1
 			, connect : (to, prop) => {
 				//this just needs to exist
 				//it doesn't actually need to do anything
@@ -118,22 +118,24 @@ class _Control_ extends WaspNode {
 		this.value = this.node._naturalValue
 	}
 
+	//propogate updates all connected wasp-nodes whenever the control node is updated
 	propogate() {
 		let o = this.io.outputs
-		console.log('outputs', o)
+		//console.log('outputs', o)
 		for (let i=0; i < o.length; i++) {
 			let {
 				toNode,
 				toProp
 				} = o[i]
-			console.log('propogation event')
-			console.log(i, o, o[i])
+			//console.log('propogation event')
+			//console.log(i, o, o[i])
 			toNode.set(toProp, this.node.value)
 		}
 	}
 
 }
 
+// everything below is a default audioNode
 class _Gain_ extends WaspNode {
 	constructor(ctx, id) {
 		super(ctx,id)
@@ -170,35 +172,53 @@ class _Oscillator_ extends WaspNode {
 
 	set(prop,value) {
 
-		switch (prop) {
-			case 'frequency':
-			case 'freq':
-				this.node.frequency.value = value;
-				return this
-			case 'detune':
-				this.node.detune.value = value;
-				return this
-			case 'type':
-			case 'waveform':
-				switch (value) {
-					case 'custom':
-						//function
-						return this
-					case 'sine':
-					case 'square':
-					case 'sawtooth':
-					case 'triangle':
-						this.node.type = value
-						return this
-					case 'saw':
-						this.node.type = 'sawtooth'
-						return this
-					default:
-						console.error ('waveform type not recognized')
-				}
+		prop = prop.toLowerCase()
+		if ( typeof value == 'string' ) {
+			value = value.toLowerCase
 		}
 
-		console.error ('cannot set unknown prop')
+		//error check before?
+
+		//is this better or worse than the long switch?
+		prop = prop == 'freq' ? 'frequency' : prop
+		value = value == 'saw' ? 'sawtooth' : value
+		console.log(prop)
+
+		//this.node[prop] = value
+		//console.log(this.node.prop, this.node.prop.value)
+
+		 switch (prop) {
+		 	case 'frequency':
+		 	case 'freq':
+		 		this.node.frequency.value = value;
+		 		return this
+		 	case 'detune':
+		 		this.node.detune.value = value;
+		 		return this
+		 	case 'type':
+		 	case 'waveform':
+		 		switch (value) {
+		 			case 'custom':
+		 				//function
+		 				return this
+		 			case 'sine':
+		 			case 'square':
+		 			case 'sawtooth':
+		 			case 'triangle':
+		 				this.node.type = value
+		 				return this
+		 			case 'saw':
+		 				this.node.type = 'sawtooth'
+		 				return this
+		 			default:
+		 				console.error ('waveform type not recognized')
+		 		}
+			default:
+				console.error ('prop not recognized')
+		}
+
+		//console.error ('cannot set unknown prop')
+		return this
 	}
 
 }
@@ -238,4 +258,5 @@ export {
 	,_Analyzer_ as Analyzer
 	,_Control_ as Control
 	,_Destination_ as Destination 
+	, WaspNode as WaspNode
 }
