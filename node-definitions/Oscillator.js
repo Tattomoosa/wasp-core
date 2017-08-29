@@ -19,8 +19,10 @@ class Oscillator extends WaspNode {
 
 		prop = prop.toLowerCase()
 		if ( typeof value == 'string' ) {
-			value = value.toLowerCase
+			value = value.toLowerCase()
 		}
+
+		console.log('set ' + this.name + ' |', prop + ' :', value) 
 
 		//this.node[prop] = value
 		//console.log(this.node.prop, this.node.prop.value)
@@ -49,7 +51,7 @@ class Oscillator extends WaspNode {
 		 				this.node.type = 'sawtooth'
 		 				return this
 		 			default:
-		 				console.error ('waveform type not recognized')
+						console.error ('type/waveform ' + value + ' not recognized')
 		 		}
 			default:
 				console.error ('prop not recognized')
