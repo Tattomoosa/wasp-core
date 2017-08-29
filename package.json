@@ -1,0 +1,19 @@
+{
+  "name": "wasp-core",
+  "version": "0.0.1",
+  "description": "Web Audio Signal Processer Application Program Interface",
+  "main": "wasp.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/Tattomoosa/wasp-core.git"
+  },
+  "author": "Matt O",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/Tattomoosa/wasp-core/issues"
+  },
+  "homepage": "https://github.com/Tattomoosa/wasp-core#readme"
+}
