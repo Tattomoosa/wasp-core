@@ -1,14 +1,3 @@
-// import { 
-// 	//web audio nodes
-// 	Gain
-// 	, Oscillator
-// 	, Analyzer
-// 	, Destination
-
-// 	//custom control node
-//   , Control
-// } from './node-definitions.js'
-
 //Web Audio API Nodes
 import { Analyzer } from './node-definitions/Analyzer.js'
 import { BiquadFilter } from './node-definitions/BiquadFilter.js'

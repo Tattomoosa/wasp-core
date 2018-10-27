@@ -3,6 +3,7 @@
 
 import NodeFactory from './node-factory'
 import check from './util/check.js'
+import Log from './util/log'
 
 const WaspTree = (function() {
 
@@ -11,11 +12,13 @@ const WaspTree = (function() {
 	const undoSize = 20
 	let undoStep = 0
 	let id = -1
+	let logg = new Log()
 
 	function log () {
 		logger('Log')
 		console.log ('STORE:\n',store,'\nHISTORY:\n',history)
 		console.log ('undo step is '+undoStep)
+		console.log ( logg.event ( { operation : 'Add' } ) )
 	}
 
 	function addNode (node, options) {
@@ -176,7 +179,7 @@ const WaspTree = (function() {
 
 		let success = success1 && success2
 		let message = message1 + message2
-	
+
 		if (success2 && prop) {
 			let {
 				success: success3
@@ -248,12 +251,11 @@ const WaspTree = (function() {
 							},
 							{redo: true})
 
-
 				)
 			}
 	}
 
-	function disconnect ({from,to,prop},options) {
+	function disconnect ( { from, to, prop }, options ) {
 		options = options || {}
 		let {
 			undo : undoOp = false
@@ -265,14 +267,14 @@ const WaspTree = (function() {
 
 		let {
 			success: success1
-			,message: message1
+			, message: message1
 		} = nodeExists(from)
-		if (!success1) from = {name: 'INVALID NODE.' + (from.id || from) }
+		if (!success1) from = { name: 'INVALID NODE.' + (from.id || from) }
 		let {
 			success: success2
-			,message: message2
+			, message: message2
 		} = nodeExists(to)
-		if (!success2) to = {name: 'INVALID NODE.' + (to.id || to) }
+		if (!success2) to = { name: 'INVALID NODE.' + (to.id || to) }
 
 		//in case we got ID numbers
 		if (typeof from === 'number') from = store[from]
