@@ -16,14 +16,14 @@ class Control extends WaspNode {
 				}
 		}
 		this._transformFunction = (n) => n
-		}
+	}
 	
 	get value() {
 		return this.node.value
 	}
 
 	set value(n) {
-		this.node._naturalValue = n 
+		this.node._naturalValue = n
 		this.node.value = this._transformFunction (n)
 		this.propogate()
 	}

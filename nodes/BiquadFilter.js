@@ -7,41 +7,41 @@ class BiquadFilter extends WaspNode {
 		this.node=ctx.createBiquadFilter()
 	}
 
-	set ( prop, value ) {
+	set (prop, value) {
 
 		prop = prop.toLowerCase()
-		if ( typeof value == 'string' ) {
+		if (typeof value == 'string') {
 			value = value.toLowerCase
 		}
 
-		prop = prop == 'q' ? 'Q' : prop
+		// prop = prop == 'q' ? 'Q' : prop
 
 		//this.node[prop] = value;
 
-		switch ( prop ) {
-			case 'frequency' :
-			case 'freq' :
+		switch (prop) {
+			case 'frequency':
+			case 'freq':
 				this.node.frequency.value = value
 				return this
-			case 'detune' :
+			case 'detune':
 				this.node.detune.value = value
 				return this
-			case 'q' :
+			case 'q':
 				this.node.q.value = value
 				return this
-			case 'gain' :
+			case 'gain':
 				this.node.gain.value = value
 				return this
-			case 'type' :
+			case 'type':
 				switch ( value ) {
-						case 'lowpass' :
-						case 'highpass' :
-						case 'bandpass' :
-						case 'lowshelf' :
-						case 'highshelf' :
-						case 'peaking' :
-						case 'notch' :
-						case 'allpass' :
+						case 'lowpass':
+						case 'highpass':
+						case 'bandpass':
+						case 'lowshelf':
+						case 'highshelf':
+						case 'peaking':
+						case 'notch':
+						case 'allpass':
 							this.node.type = value
 						default :
 							console.error('biquad filter type not recognized')

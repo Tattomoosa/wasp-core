@@ -1,8 +1,12 @@
 // u is a utility shorthand
 //import u from './util/Util.js'
 //import WaspNode from './wasp-node'
-import NodeFactory from './node-factory'
-import WaspTree from './wasp-tree'
+// import NodeFactory from './node-factory'
+// import WaspTree from './wasp-tree'
+import nodes from './nodes/index';
+import Graph from './wasp-graph'
+
+let graph = Graph
 
 let AudioContext = window.AudioContext ||
 	window.webkitAudioContext
@@ -21,38 +25,39 @@ export default class Wasp {
 			 ,log = true
 		 } = options
 
-		console.log('W E B A U D I O S I G N A L ' +
-								'P R O C E S S O R\n\n'
-								,'v.'+ version)
-
-		this.audioContext = new AudioContext
-		WaspTree.audioContext = this.audioContext
+		this.audioContext = new AudioContext()
 		this.log = log
-		//this.master = this.create('DESTINATION')
-		this.master = WaspTree.addNode('DESTINATION', {noUndo: true})
+		this.nodes = nodes
+		// this.graph = Graph
+
+		this.master = this.create(nodes.Destination)
 	}
 
-	create(type) {
-		let node = WaspTree.addNode(type)
-		return node
+	create(node) {
+		let n = new node(this.audioContext, graph.newID)
+		// this.graph.ADD_NODE(n)
+		graph.ADD_NODE(n)
+		return n
+	}
+
+	destroy(node) {
+		// this.graph.REMOVE_NODE(node)
+		graph.REMOVE_NODE(node)
+		node.destroy()
 	}
 
 	connect(from, to, prop) {
-		WaspTree.connect({from: from, to: to, prop: prop})
+		// WaspTree.connect({from: from, to: to, prop: prop})
 	}
 	
 	disconnect(from, to, prop) {
-		WaspTree.disconnect({from: from, to: to, prop: prop})
+		// WaspTree.disconnect({from: from, to: to, prop: prop})
 	}
 
 	disconnectAll(node) {
-		node.disconnectAll()
+		// node.disconnectAll()
 	}
 
-	// remove takes either a node object or an id #
-	remove(node) {
-		WaspTree.removeNode(node)
-	}
 
 	undo() {
 		WaspTree.undo()
